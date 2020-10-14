@@ -3,6 +3,8 @@ services:
   app:
     build:
       context: .
+    tty: true
+    stdin_open: true
     env_file:
       - ./environments/db.env
     command: bundle exec puma -C config/puma.rb
@@ -13,6 +15,8 @@ services:
       - log-data:/webapp/log
     depends_on:
       - db
+    environment:
+      RAILS_ENV: production
   db:
     image: mysql:5.7
     env_file:
@@ -24,6 +28,7 @@ services:
       context: containers/nginx
     volumes:
       - public-data:/webapp/public
+      - ./nginx/log:/var/log/nginx
       - tmp-data:/webapp/tmp
     ports:
       - 80:80
